@@ -14,92 +14,122 @@ namespace Employee_Payroll
         readonly SqlConnection connection = new SqlConnection(connectionString);
         public void GetEmployeeRecords()
         {
-                try
+            try
+            {
+                EmployeeModel model = new EmployeeModel();
+                using (this.connection)
                 {
-                    EmployeeModel model = new EmployeeModel();
-                    using (this.connection)
+                    string query = @"SELECT * from employee_payroll;";
+                    SqlCommand cmd = new SqlCommand(query, connection);
+                    this.connection.Open();
+                    SqlDataReader sdr = cmd.ExecuteReader();
+                    if (sdr.HasRows)
                     {
-                        string query = @"SELECT * from employee_payroll;";
-                        SqlCommand cmd = new SqlCommand(query, connection);
-                        this.connection.Open();
-                        SqlDataReader sdr = cmd.ExecuteReader();
-                        if (sdr.HasRows)
+                        while (sdr.Read())
                         {
-                            while (sdr.Read())
-                            {
-                                model.EmployeeId = sdr.GetInt32(0);
-                                model.EmployeeName = sdr.GetString(1);
-                                model.BasicPay = sdr.GetInt32(2);
-                                model.StartDate = sdr.GetDateTime(3);
-                                model.Gender = Convert.ToChar(sdr.GetString(4));
-                                model.PhoneNumber = sdr.GetInt64(5);
-                                model.Address = sdr.GetString(6);
-                                model.Department = sdr.GetString(7);
-                                model.Deductions = sdr.GetInt32(8);
-                                model.TaxablePay = sdr.GetInt32(9);
-                                model.IncomeTax = sdr.GetInt32(10);
-                                model.NetPay = sdr.GetInt32(11);
-                                //Print Record on Console
-                                Console.WriteLine("{0},{1},{2},{3},{4},{5}", model.EmployeeId, model.EmployeeName, model.Gender, model.Department, model.Address, model.NetPay);
-                                Console.WriteLine("\n");
-                            }
+                            model.EmployeeId = sdr.GetInt32(0);
+                            model.EmployeeName = sdr.GetString(1);
+                            model.BasicPay = sdr.GetInt32(2);
+                            model.StartDate = sdr.GetDateTime(3);
+                            model.Gender = Convert.ToChar(sdr.GetString(4));
+                            model.PhoneNumber = sdr.GetInt64(5);
+                            model.Address = sdr.GetString(6);
+                            model.Department = sdr.GetString(7);
+                            model.Deductions = sdr.GetInt32(8);
+                            model.TaxablePay = sdr.GetInt32(9);
+                            model.IncomeTax = sdr.GetInt32(10);
+                            model.NetPay = sdr.GetInt32(11);
+                            //Print Record on Console
+                            Console.WriteLine("{0},{1},{2},{3},{4},{5}", model.EmployeeId, model.EmployeeName, model.Gender, model.Department, model.Address, model.NetPay);
+                            Console.WriteLine("\n");
                         }
-                        else
-                            Console.WriteLine("No Records in Database");
-                        sdr.Close();
-                        this.connection.Close();
                     }
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception(ex.Message);
-                }
-                finally
-                {
+                    else
+                        Console.WriteLine("No Records in Database");
+                    sdr.Close();
                     this.connection.Close();
                 }
             }
-            public void AddEmployee(EmployeeModel model)
+            catch (Exception ex)
             {
-                try
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                this.connection.Close();
+            }
+        }
+        public void AddEmployee(EmployeeModel model)
+        {
+            try
+            {
+                using (this.connection)
                 {
-                    using (this.connection)
-                    {
-                        SqlCommand command = new SqlCommand("spAddEmployeeDetails", this.connection);
-                        command.CommandType = CommandType.StoredProcedure;
+                    SqlCommand command = new SqlCommand("spAddEmployeeDetails", this.connection);
+                    command.CommandType = CommandType.StoredProcedure;
 
-                        command.Parameters.AddWithValue("@name", model.EmployeeName);
-                        command.Parameters.AddWithValue("@basic_Pay", model.BasicPay);
-                        command.Parameters.AddWithValue("@start_date", model.StartDate);
-                        command.Parameters.AddWithValue("@Gender", model.Gender);
-                        command.Parameters.AddWithValue("@phonenumber", model.PhoneNumber);
-                        command.Parameters.AddWithValue("@address", model.Address);
-                        command.Parameters.AddWithValue("@department", model.Department);
-                        command.Parameters.AddWithValue("@Deductions", model.Deductions);
-                        command.Parameters.AddWithValue("@taxable_pay", model.TaxablePay);
-                        command.Parameters.AddWithValue("@income_tax", model.IncomeTax);
-                        command.Parameters.AddWithValue("@net_pay", model.NetPay);
+                    command.Parameters.AddWithValue("@Name", model.EmployeeName);
+                    command.Parameters.AddWithValue("@BasicPay", model.BasicPay);
+                    command.Parameters.AddWithValue("@Startdate", model.StartDate);
+                    command.Parameters.AddWithValue("@Gender", model.Gender);
+                    command.Parameters.AddWithValue("@phoneNumber", model.PhoneNumber);
+                    command.Parameters.AddWithValue("@Address", model.Address);
+                    command.Parameters.AddWithValue("@Department", model.Department);
+                    command.Parameters.AddWithValue("@Deductions", model.Deductions);
+                    command.Parameters.AddWithValue("@Taxable_Pay", model.TaxablePay);
+                    command.Parameters.AddWithValue("@Income_Tax", model.IncomeTax);
+                    command.Parameters.AddWithValue("@Net_Pay", model.NetPay);
 
 
-                        connection.Open();
-                        var result = command.ExecuteNonQuery();
-                        connection.Close();
-                        this.connection.Close();
-                        if (result != 0)
-                            Console.WriteLine("Data inserted in DataBase");
-                        else
-                            Console.WriteLine(result);
-                    }
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.Message);
-                }
-                finally
-                {
+                    connection.Open();
+                    var result = command.ExecuteNonQuery();
                     connection.Close();
+                    this.connection.Close();
+                    if (result != 0)
+                        Console.WriteLine("Data inserted in DataBase");
+                    else
+                        Console.WriteLine(result);
                 }
             }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            finally
+            {
+                connection.Close();
+            }
+        }
+        public void UpdateBasicPay(EmployeeModel model)
+        {
+            try
+            {
+                using (this.connection)
+                {
+                    SqlCommand command = new SqlCommand("spUpdateEmp", this.connection);
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@Name", model.EmployeeName);
+                    command.Parameters.AddWithValue("@BasicPay", model.BasicPay);
+
+                    this.connection.Open();
+                    //Executes Sql statement to Update in DB
+                    var result = command.ExecuteNonQuery();
+                    this.connection.Close();
+                    if (result != 0)
+                        Console.WriteLine("Data updated in DB");
+                    else
+                        Console.WriteLine(result);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                this.connection.Close();
+            }
+        }
         }
 }
 

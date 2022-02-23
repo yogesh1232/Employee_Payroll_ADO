@@ -13,7 +13,8 @@ namespace Employee_Payroll
             EmployeeRepository employeeRepository = new EmployeeRepository();
             //employeeRepository.GetEmployeeRecords();
             EmployeeModel Model = new EmployeeModel();
-            Model.EmployeeId = 2;
+            Console.WriteLine("Add employee in database");
+            Model.EmployeeId = 4;
             Model.EmployeeName = "Jayesh";
             Model.PhoneNumber = 34543787519;
             Model.Address = "Bagpat";
@@ -25,8 +26,11 @@ namespace Employee_Payroll
             Model.IncomeTax = 0;
             Model.StartDate = DateTime.Now;
             Model.NetPay = 19900;
-
             employeeRepository.AddEmployee(Model);
+            Console.WriteLine("Update basic salary");
+            Model.EmployeeName = "Kavita";
+            Model.BasicPay = 35000;
+            employeeRepository.UpdateBasicPay(Model);
         }
         static void Main(string[] args)
         {
