@@ -35,6 +35,8 @@ namespace Employee_Payroll
             Model.EmployeeName = "Sangita";
             Model.BasicPay = 45000;
             employeeRepository.UpdateBasicPayByPreparedStatement(Model);
+            Console.WriteLine("Fetch Records in Specified date");
+            employeeRepository.GetEmployeeDetailsByDate();
         }
         static void Main(string[] args)
         {
