@@ -130,6 +130,37 @@ namespace Employee_Payroll
                 this.connection.Close();
             }
         }
+        public void UpdateBasicPayByPreparedStatement(EmployeeModel model)
+        {
+            try
+            {
+                using (this.connection)
+                {
+                    SqlCommand command = new SqlCommand("update employee_payroll set Base_Pay = @BasicPay where Name = @Name;", this.connection);
+                    command.Prepare();
+                    command.Parameters.AddWithValue("@Name", model.EmployeeName);
+                    command.Parameters.AddWithValue("@BasicPay", model.BasicPay);
+                    //Open Connection of Database
+                    this.connection.Open();
+                    //Executes Sql statement to Update in Db.
+                    var rows = command.ExecuteNonQuery();
+                    //Close Connection of database
+                    this.connection.Close();
+                    if (rows != 0)
+                        Console.WriteLine("Updated in Db");
+                    else
+                        Console.WriteLine(rows);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                this.connection.Close();
+            }
         }
+    }
 }
 

@@ -31,6 +31,10 @@ namespace Employee_Payroll
             Model.EmployeeName = "Kavita";
             Model.BasicPay = 35000;
             employeeRepository.UpdateBasicPay(Model);
+            Console.WriteLine("Update basic salary using prepared statement");
+            Model.EmployeeName = "Sangita";
+            Model.BasicPay = 45000;
+            employeeRepository.UpdateBasicPayByPreparedStatement(Model);
         }
         static void Main(string[] args)
         {
