@@ -212,6 +212,54 @@ namespace Employee_Payroll
                 this.connection.Close();
             }
         }
+        public void DatabaseFunction()
+        {
+            try
+            {
+                DBFunctionOperations do = new DBFunctionOperations();
+                 using (this.connection)
+                {
+                    string queryDb = @"SELECT gender,COUNT(BasicPay) AS TotalCount,
+                                   SUM(BasicPay) AS TotalSum, 
+                                   AVG(BasicPay) AS AverageValue, 
+                                   MIN(BasicPay) AS MinValue, 
+                                   MAX(BasicPay) AS MaxValue
+                                   FROM employee_payroll GROUP BY Gender;";
+                    //define SqlCommand Object
+                    SqlCommand cmd = new SqlCommand(queryDb, this.connection);
+                    this.connection.Open();
+                    SqlDataReader dr = cmd.ExecuteReader();
+                    if (dr.HasRows)
+                    {
+                        while (dr.Read())
+                        {
+                            do.Gender = Convert.ToString(dr["Gender"]);
+                            do.Count = Convert.ToInt32(dr["TotalCount"]);
+                            do.TotalSum = Convert.ToDouble(dr["TotalSum"]);
+                            do.Avg = Convert.ToDouble(dr["AverageValue"]);
+                            do.Min = Convert.ToDouble(dr["MinValue"]);
+                            do.Max = Convert.ToDouble(dr["MaxValue"]);
+                            Console.WriteLine("Gender: {0}, TotalCount: {1}, TotalSalary: {2}, AvgSalary:  {3}, MinSalary:  {4}, MaxSalary:  {5}",do.Gender, do.Count, do.TotalSum, do.Avg,do.Min, do.Max);
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Rows does not exist");
+                    }
+                    dr.Close();
+                    this.connection.Close();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            finally
+            {
+                this.connection.Close();
+            }
+            Console.WriteLine();
+        }
     }
 }
 
